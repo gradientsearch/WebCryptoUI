@@ -1,5 +1,4 @@
 <script lang="ts">
-	import hljs from 'highlight.js/lib/core';
 	import 'highlight.js/styles/github.css';
 	import RandomUuid from './components/randomUUID.svelte';
 
