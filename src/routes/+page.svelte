@@ -1,7 +1,7 @@
 <script lang="ts">
 	import 'highlight.js/styles/github.css';
 	import RandomUuid from './components/randomUUID.svelte';
-
+	import Methods from './components/methods.svelte';
 </script>
 
 <header class="bg-base-100 sticky top-0 flex h-[48px] items-center justify-center p-1">
@@ -12,16 +12,7 @@
 
 <div class="flex h-full w-full justify-center">
 	<div class="max-w-5xl">
-		<div class="mt-4 flex min-w-[500px] flex-row">
-			<div>(sidebar)</div>
-
-			<div class=" border-base-200 flex flex-row items-start border">
-				<div class="flex-col">
-					<button class="bg-base-100 rounded-lg p-2 text-base shadow-lg"> randomUUID() </button>
-				</div>
-			</div>
-		</div>
-
+		<Methods></Methods>
 		<!--  code  -->
 		{#if true}
 			<RandomUuid></RandomUuid>
@@ -43,9 +34,9 @@
 			</div>
 		{/if}
 		<!--  Add button  -->
-          
+
 		<button
-			class="bg-primary-200 mt-4 flex min-w-[100%]  w-100 items-center justify-center rounded-lg p-2 shadow-lg"
+			class="bg-primary-200 w-100 mt-4 flex min-w-[100%] items-center justify-center rounded-lg p-2 shadow-lg"
 		>
 			<div class="w-100 flex flex-row">
 				<span>Add +</span>
