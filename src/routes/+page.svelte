@@ -1,36 +1,8 @@
 <script lang="ts">
 	import hljs from 'highlight.js/lib/core';
 	import 'highlight.js/styles/github.css';
+	import RandomUuid from './components/randomUUID.svelte';
 
-	import typescript from 'highlight.js/lib/languages/typescript';
-
-	hljs.registerLanguage('typescript', typescript);
-
-	let code = `\n/* random uuid */
-let uuid = crypto.randomUUID();
-console.log(uuid); // for example "36b8f84d-df4e-4d49-b662-bcde71a8764f"`;
-
-	let randomUUIDOutput: string | undefined = $state();
-	function randomUUID() {
-		randomUUIDOutput = crypto.randomUUID();
-	}
-	let hc = hljs.highlight(code, { language: 'typescript' });
-	console.log(hc.code);
-
-	function copy() {
-		if (hc?.code !== undefined) {
-			navigator.clipboard.writeText(hc.code).then(
-				() => {
-					// Text copied successfully
-					console.log('Text copied to clipboard');
-				},
-				() => {
-					// Failed to copy text
-					console.error('Failed to copy text');
-				}
-			);
-		}
-	}
 </script>
 
 <header class="bg-base-100 sticky top-0 flex h-[48px] items-center justify-center p-1">
@@ -53,33 +25,7 @@ console.log(uuid); // for example "36b8f84d-df4e-4d49-b662-bcde71a8764f"`;
 
 		<!--  code  -->
 		{#if true}
-			<div class="mt-4 flex flex-col border border-dashed border-gray-200 p-6">
-				<div class="flex flex-row">
-					<div>(sidebar)</div>
-
-					<div class=" border-base-200 flex min-w-[500px] flex-row items-start border">
-						<div class="flex-col">
-							<header class="bg-base-100 flex flex-row">
-                                <button onclick={() => randomUUID()}>run</button>
-								<div class="flex-1"></div>
-								<button onclick={copy}>copy</button>
-							</header>
-							<div class="bg-base-50 flex min-w-[100%] justify-between">
-								<pre class="hljs">
-                            <code class="language-typescript">
-                              {@html hc.value}
-                            </code>
-                          </pre>
-							</div>
-						</div>
-					</div>
-				</div>
-                {#if randomUUIDOutput}
-                <div class="pt-10">
-                    {randomUUIDOutput}
-                </div>
-                {/if}
-			</div>
+			<RandomUuid></RandomUuid>
 		{/if}
 
 		{#if false}
