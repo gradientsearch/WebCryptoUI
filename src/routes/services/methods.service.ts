@@ -9,7 +9,7 @@ export interface Method {
 export interface MethodFunctions {
     create(m: Method): void;
     update(m: Method): void;
-    delete(m: Method): void;
+    delete(idx: number): void;
 }
 
 function NewMethodFunctions(){
@@ -20,7 +20,7 @@ function NewMethodFunctions(){
         update: function (m: Method): void {
             throw new Error("Function not implemented.");
         },
-        delete: function (m: Method): void {
+        delete: function (idx: number): void {
             throw new Error("Function not implemented.");
         }
     }
@@ -41,6 +41,10 @@ export class MethodService {
             idx: idx
         }
         this.fnMethods.create(method)
+    }
+
+    delete(idx: number){
+        this.fnMethods.delete(idx)
     }
 
 }

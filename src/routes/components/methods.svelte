@@ -2,9 +2,10 @@
 	import { getSortedComponents } from '../components';
 	import type { MethodService } from '../services/methods.service';
 	import BaseContainer from './baseContainer.svelte';
-	let { methodService = $bindable<MethodService>(), idx = 0 } = $props();
+	let { methodService = $bindable<MethodService>(), idx } = $props();
 
     function add (k: string) {
+        methodService.delete(idx)
         methodService.create(k, idx)
     }
 </script>

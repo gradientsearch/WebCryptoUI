@@ -6,7 +6,7 @@
 		output = $bindable<string>(),
 		fn = $bindable<Function>(),
 		hc = $bindable<HighlightResult>(),
-		idx = $bindable<number>(0)
+		idx = $bindable<number>()
 	} = $props();
 	function copy() {
 		if (hc?.code !== undefined) {
@@ -25,32 +25,32 @@
 </script>
 
 <BaseContainer>
-	<div class="p-2">In: [{`${idx}`}]</div>
+	<div class="p-2">In: [{`${Number.parseInt(idx)}`}]</div>
 
-	<div class=" border-base-200 flex min-w-[500px] flex-row items-start border">
-		<div class="flex-col">
-			<header class="bg-base-100 flex flex-row">
-				<button onclick={() => fn()}>run</button>
-				<div class="flex-1"></div>
-				<button onclick={copy}>copy</button>
-			</header>
-			<div class="bg-base-50 flex min-w-[100%] justify-between">
-				<pre class="hljs">
+	<div class="flex-col">
+		<div class=" border-base-200 flex min-w-[500px] items-start border">
+			<div class="flex-col">
+				<header class="bg-base-100 flex flex-row">
+					<button onclick={() => fn()}>run</button>
+					<div class="flex-1"></div>
+					<button onclick={copy}>copy</button>
+				</header>
+				<div class="bg-base-50 flex min-w-[100%] justify-between">
+					<pre class="hljs">
                 <code class="language-typescript">
                   {@html hc.value}
                 </code>
               </pre>
+				</div>
 			</div>
 		</div>
+		{#if output}
+			<div class="pt-10">
+				{output}
+			</div>
+		{/if}
 	</div>
-
-	{#if output}
-		<div class="pt-10">
-			{output}
-		</div>
-	{/if}
 </BaseContainer>
-
 
 <style>
 	pre {
