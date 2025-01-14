@@ -4,7 +4,8 @@
 	let {
 		output = $bindable<string>(),
 		fn = $bindable<Function>(),
-		hc = $bindable<HighlightResult>()
+		hc = $bindable<HighlightResult>(),
+		idx = $bindable<number>(0)
 	} = $props();
 	function copy() {
 		if (hc?.code !== undefined) {
@@ -24,7 +25,7 @@
 
 <div class="border-base-200 mt-4 flex flex-col border border-dashed p-6">
 	<div class="flex flex-row">
-		<div>(sidebar)</div>
+		<div class="p-2">In: [{`${idx}`}]</div>
 
 		<div class=" border-base-200 flex min-w-[500px] flex-row items-start border">
 			<div class="flex-col">

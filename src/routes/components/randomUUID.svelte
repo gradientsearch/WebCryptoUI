@@ -5,6 +5,8 @@
 	import type { HighlightResult } from 'highlight.js';
 	import { highlight } from '$lib/hljs';
 
+    let {index: idx = $bindable<number>()} = $props()
+
 	let code = `\n/* random uuid */
 let uuid = crypto.randomUUID();
 console.log(uuid); // for example "36b8f84d-df4e-4d49-b662-bcde71a8764f"`;
@@ -22,5 +24,5 @@ console.log(uuid); // for example "36b8f84d-df4e-4d49-b662-bcde71a8764f"`;
 </script>
 
 {#if hc !== undefined}
-	<Container hc={hc} fn={randomUUID} output={output}></Container>
+	<Container idx={idx} hc={hc} fn={randomUUID} output={output}></Container>
 {/if}
