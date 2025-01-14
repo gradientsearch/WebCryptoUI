@@ -2,6 +2,11 @@
 @import 'tailwindcss/components';
 @import 'tailwindcss/utilities';
 
+body {
+  
+
+}
+
 @layer base {
     :root.theme-yellow {
         --color-primary-50: #fefce8;
@@ -27,5 +32,7 @@
         --color-base-800: #1f2937;
         --color-base-900: #111827;
         --color-base-950: #030712;
+
+        --color-select: #fef9c3;
     }
 }

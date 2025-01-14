@@ -27,15 +27,15 @@
 <BaseContainer>
 	<div class="p-2">In: [{`${Number.parseInt(idx)}`}]</div>
 
-	<div class="flex-col w-full">
-		<div class=" border-base-200 flex min-w-[500px] w-[100%] items-start border">
-			<div class="flex-col w-full">
-				<header class="bg-base-10 flex flex-row w-[100%]">
+	<div class="w-[90%] flex-col">
+		<div class=" flex w-[100%] items-start border border-base-200">
+			<div class="w-[100%] flex-col">
+				<header class="flex w-[100%] flex-row bg-base-200">
 					<button onclick={() => fn()}>run</button>
 					<div class="flex-1"></div>
 					<button onclick={copy}>copy</button>
 				</header>
-				<div class="bg-base-50 flex min-w-[100%] justify-between">
+				<div class="flex min-w-[100%] justify-between bg-base-50">
 					<pre class="hljs">
                 <code class="language-typescript">
                   {@html hc.value}
@@ -45,7 +45,7 @@
 			</div>
 		</div>
 		{#if output}
-			<div class="pt-10">
+			<div class="w-full overflow-hidden break-words pt-10">
 				{output}
 			</div>
 		{/if}

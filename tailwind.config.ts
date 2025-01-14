@@ -35,6 +35,7 @@ export default {
 					950: 'var(--color-base-950)',
 				},
 			
+				select: 'var(--color-select)'
 				
 			  },
 		}
