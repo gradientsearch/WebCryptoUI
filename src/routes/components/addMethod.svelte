@@ -1,5 +1,5 @@
 <script lang="ts">
-	let { fn = $bindable<Function>(), idx = $bindable<number>() } = $props();
+	let { fn , idx = $bindable<number>() } = $props();
 </script>
 
 <button
