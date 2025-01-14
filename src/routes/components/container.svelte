@@ -50,3 +50,10 @@
 		</div>
 	{/if}
 </BaseContainer>
+
+
+<style>
+	pre {
+		@apply bg-base-50;
+	}
+</style>

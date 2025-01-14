@@ -1,7 +1,37 @@
 <script lang="ts">
 	import 'highlight.js/styles/github.css';
-	import RandomUuid from './components/randomUUID.svelte';
 	import Methods from './components/methods.svelte';
+	import AddMethod from './components/addMethod.svelte';
+	import { MethodService, type Method, type MethodFunctions } from './services/methods.service';
+	import { getComponent } from './components';
+
+	function showMethods(idx: number) {
+		let m: Method = {
+			methodType: 'methods',
+			idx: idx
+		};
+		methods.splice(m.idx, 0, m);
+        console.log(methods)
+	}
+
+	function create(m: Method) {
+		methods.splice(m.idx, 0, m);
+		console.log(methods, m);
+	}
+
+	function update(m: Method) {}
+
+	function deleteFn(m: Method) {}
+
+	let fnMethods: MethodFunctions = {
+		create: create,
+		update: update,
+		delete: deleteFn
+	};
+
+	let methodService = $state(new MethodService(fnMethods));
+
+	let methods: Method[] = $state([]);
 </script>
 
 <header class="bg-base-100 sticky top-0 flex h-[48px] items-center justify-center p-1">
@@ -11,44 +41,27 @@
 </header>
 
 <div class="flex h-full w-full justify-center">
-	<div class="max-w-5xl">
-		<Methods></Methods>
-		<!--  code  -->
-		{#if true}
-			<RandomUuid></RandomUuid>
-		{/if}
-
-		{#if false}
-			<div class="mt-4 flex flex-row">
-				<div>(sidebar)</div>
-
-				<div class=" border-base-200 flex min-w-[500px] flex-row items-start border">
-					<div class="flex-col">
-						<div class="flex min-w-[100%] justify-between">parameters</div>
-
-						<span class="border-base-200 flex min-w-[100%] flex-1 border-t border-dotted"></span>
-
-						<div>Code</div>
-					</div>
-				</div>
+	<div class="w-full max-w-5xl">
+		{#if methods.length === 0}
+			<div class="w-[100%]">
+				<Methods bind:methodService idx={0}></Methods>
 			</div>
 		{/if}
-		<!--  Add button  -->
 
-		<button
-			class="bg-primary-200 w-100 mt-4 flex min-w-[100%] items-center justify-center rounded-lg p-2 shadow-lg"
-		>
-			<div class="w-100 flex flex-row">
-				<span>Add +</span>
-			</div>
-
-			<div></div>
-		</button>
+		{#each methods as m, idx}
+			{#if idx === 0}
+				<AddMethod bind:fn={create} idx={0}></AddMethod>
+			{/if}
+			{#if m.methodType === 'methods'}
+				{@const Component = getComponent(m.methodType)}
+                
+				<Component idx={idx} bind:methodService></Component>
+			{:else}
+				{@const Component = getComponent(m.methodType)}
+				<Component idx={idx}></Component>
+				<AddMethod bind:fn={showMethods} idx={idx + 1}></AddMethod>
+			{/if}
+			<!-- <Methods bind:methodService idx={idx + 1}></Methods> -->
+		{/each}
 	</div>
 </div>
-
-<style>
-	pre {
-		@apply bg-base-50;
-	}
-</style>
