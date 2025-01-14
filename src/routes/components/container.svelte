@@ -27,10 +27,10 @@
 <BaseContainer>
 	<div class="p-2">In: [{`${Number.parseInt(idx)}`}]</div>
 
-	<div class="flex-col">
-		<div class=" border-base-200 flex min-w-[500px] items-start border">
-			<div class="flex-col">
-				<header class="bg-base-100 flex flex-row">
+	<div class="flex-col w-full">
+		<div class=" border-base-200 flex min-w-[500px] w-[100%] items-start border">
+			<div class="flex-col w-full">
+				<header class="bg-base-10 flex flex-row w-[100%]">
 					<button onclick={() => fn()}>run</button>
 					<div class="flex-1"></div>
 					<button onclick={copy}>copy</button>
