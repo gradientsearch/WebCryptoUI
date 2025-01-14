@@ -56,6 +56,7 @@
 			{#if m.methodType === 'methods'}
 				{@const Component = getComponent(m.methodType)}
 				<Component {idx} bind:methodService></Component>
+				<AddMethod bind:fn={showMethods} idx={idx + 1}></AddMethod>
 			{:else}
 				{@const Component = getComponent(m.methodType)}
 				<Component {idx}></Component>
