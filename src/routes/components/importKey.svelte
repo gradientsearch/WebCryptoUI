@@ -4,13 +4,14 @@
 	import type { HighlightResult } from 'highlight.js';
 	import { highlight } from '$lib/hljs';
 
-	import Aesgcm from './algorithms/aes/aesgcm.svelte';
+	import Aesgcm from './algorithms/aes/aes.svelte';
+	import rsa from './algorithms/rsa/rsa.svelte';
 
 	let { idx } = $props();
 
 	let format: string = $state('jwk');
 	let keyData: string = $state('');
-	let algorithm: string = $state('AES-GCM');
+	let algorithm: string = $state('AES');
 	let extractable: boolean = $state(true);
 	let algorithmParams: any = $state();
 
@@ -19,7 +20,7 @@
 	let output: string | undefined = $state();
 
 	let formats: string[] = ['jwk']; // ['raw', 'pkcs8', 'spki', 'jwk'];
-	let algorithms: string[] = ['AES-GCM']; // ['raw', 'pkcs8', 'spki', 'jwk'];
+	let algorithms: string[] = ['AES', 'RSA']; // ['raw', 'pkcs8', 'spki', 'jwk'];
 	let keyUsageOptions: any[] = $state([
 		{ usage: 'encrypt', description: 'The key may be used to encrypt messages.', isChecked: false },
 		{ usage: 'decrypt', description: 'The key may be used to decrypt messages.', isChecked: false },
@@ -35,7 +36,10 @@
 		{ usage: 'unwrapKey', description: 'The key may be used to unwrap a key.', isChecked: false }
 	]);
 
-	const ALGORITHM_COMPONENTS = new Map<String, any>([['AES-GCM', Aesgcm]]);
+	const ALGORITHM_COMPONENTS = new Map<String, any>([
+		['AES', Aesgcm],
+		['RSA', rsa]
+	]);
 	function getAlgorithmComponent(algo: string): any {
 		return ALGORITHM_COMPONENTS.get(algo);
 	}
@@ -79,13 +83,17 @@ let key = await crypto.subtle.importKey(
 	}
 
 	async function importKey() {
+		
+		
 		let key = await crypto.subtle.importKey(
 			'jwk',
 			JSON.parse(keyData),
-			algorithmParams,
+			JSON.parse(algorithmParams),
 			extractable,
 			keyUsageOptions.filter((o) => o.isChecked).map((o) => o.usage)
 		);
+
+		output = String(key)
 	}
 
 	onMount(() => {
@@ -185,5 +193,6 @@ let key = await crypto.subtle.importKey(
 		<Component bind:algorithmParams></Component>
 	{/if}
 
+	{algorithmParams}
 	<Container {idx} bind:hc fn={importKey} {output}></Container>
 {/if}
