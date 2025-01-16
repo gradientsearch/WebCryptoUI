@@ -1,4 +1,5 @@
 import GetRandomValues from './components/getRandomValues.svelte';
+import ImportKey from './components/importKey.svelte';
 import Methods from './components/methods.svelte';
 import RandomUuid from './components/randomUUID.svelte';
 
@@ -10,6 +11,10 @@ export let components = {
 	getRandomValues: {
 		components: GetRandomValues,
 		order: 2
+	},
+	importKey: {
+		components: ImportKey,
+		order: 3
 	}
 };
 
@@ -25,6 +30,8 @@ export function getComponent(type: string) {
 			return RandomUuid;
 		case 'getRandomValues':
 			return GetRandomValues;
+		case 'importKey':
+			return ImportKey;
 		case 'methods':
 			return Methods;
 	}
