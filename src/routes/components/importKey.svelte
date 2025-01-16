@@ -1,17 +1,18 @@
 <script lang="ts">
 	import Container from './container.svelte';
-	import { hasContext, onMount, untrack } from 'svelte';
+	import { onMount, untrack } from 'svelte';
 	import type { HighlightResult } from 'highlight.js';
 	import { highlight } from '$lib/hljs';
+
+	import Aesgcm from './algorithms/aes/aesgcm.svelte';
+
+	let { idx } = $props();
 
 	let format: string = $state('jwk');
 	let keyData: string = $state('');
 	let algorithm: string = $state('AES-GCM');
 	let extractable: boolean = $state(true);
-	let keyUsages: string[] = $state([]);
-
-	let typedArrayLength: number = $state(10);
-	let { idx } = $props();
+	let algorithmParams: any = $state();
 
 	let code = $state('');
 	let hc: HighlightResult | undefined = $state();
@@ -34,25 +35,35 @@
 		{ usage: 'unwrapKey', description: 'The key may be used to unwrap a key.', isChecked: false }
 	]);
 
+	const ALGORITHM_COMPONENTS = new Map<String, any>([['AES-GCM', Aesgcm]]);
+	function getAlgorithmComponent(algo: string): any {
+		return ALGORITHM_COMPONENTS.get(algo);
+	}
+
 	$effect(() => {
 		format;
-		typedArrayLength;
 		keyData;
 		extractable;
 		/** need to track the isChecked values of keyOptions*/
-		keyUsageOptions.filter(o => {return o.isChecked})
+		keyUsageOptions.filter((o) => {
+			return o.isChecked;
+		});
+		algorithmParams;
 		untrack(() => {
 			console.log('untracked');
-			code = `\n let keyData = \`${keyData}\`
+			code = `\nlet keyData = \`${keyData}\`
 let key = await crypto.subtle.importKey(
-'${format}',
-JSON.parse(key),
-{
-    name: 'RSA-OAEP',
-    hash: 'SHA-256'
-},
-${extractable},
-[${keyUsageOptions.filter(o => {return o.isChecked} ).map((o, idx, a) => {return '\'' + o.usage + '\''})}]
+	"${format}",
+	JSON.parse(keyData),
+	${algorithmParams},
+	${extractable},
+	[${keyUsageOptions
+		.filter((o) => {
+			return o.isChecked;
+		})
+		.map((o) => {
+			return '"' + o.usage + '"';
+		})}]
 );
 `;
 			hc = highlight(code);
@@ -67,25 +78,14 @@ ${extractable},
 		return hexString.match(/.{1,2}/g)?.map((byte) => parseInt(byte, 16)) ?? [];
 	}
 
-	function importKey() {
-		let t = getTypedArray().get(format);
-		const array = new t(typedArrayLength);
-		crypto.getRandomValues(array);
-		output = bytesToHex(new Uint8Array(array));
-	}
-
-	function getTypedArray(): Map<String, any> {
-		return new Map<String, any>([
-			['Int8Array', Int8Array],
-			['Uint8Array', Uint8Array],
-			['Uint8ClampedArray', Uint8ClampedArray],
-			['Int16Array', Int16Array],
-			['Uint16Array', Uint16Array],
-			['Int32Array', Int32Array],
-			['Uint32Array', Uint32Array],
-			['BigInt64Array', BigInt64Array],
-			['BigUint64Array', BigUint64Array]
-		]);
+	async function importKey() {
+		let key = await crypto.subtle.importKey(
+			'jwk',
+			JSON.parse(keyData),
+			algorithmParams,
+			extractable,
+			keyUsageOptions.filter((o) => o.isChecked).map((o) => o.usage)
+		);
 	}
 
 	onMount(() => {
@@ -176,9 +176,14 @@ ${extractable},
 					{/each}
 				</div>
 			</fieldset>
-	
 		</div>
 	</div>
+
+	{#if algorithm}
+		<h1>Algorithm Parameters</h1>
+		{@const Component = getAlgorithmComponent(algorithm)}
+		<Component bind:algorithmParams></Component>
+	{/if}
 
 	<Container {idx} bind:hc fn={importKey} {output}></Container>
 {/if}
