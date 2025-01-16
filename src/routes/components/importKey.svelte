@@ -19,7 +19,7 @@
 
 	let formats: string[] = ['jwk']; // ['raw', 'pkcs8', 'spki', 'jwk'];
 	let algorithms: string[] = ['AES-GCM']; // ['raw', 'pkcs8', 'spki', 'jwk'];
-	let keyUsagesOptions: any[] = $state([
+	let keyUsageOptions: any[] = $state([
 		{ usage: 'encrypt', description: 'The key may be used to encrypt messages.', isChecked: false },
 		{ usage: 'decrypt', description: 'The key may be used to decrypt messages.', isChecked: false },
 		{ usage: 'sign', description: 'The key may be used to sign messages.', isChecked: false },
@@ -37,11 +37,23 @@
 	$effect(() => {
 		format;
 		typedArrayLength;
+		keyData;
+		extractable;
+		/** need to track the isChecked values of keyOptions*/
+		keyUsageOptions.filter(o => {return o.isChecked})
 		untrack(() => {
 			console.log('untracked');
-			code = `\nconst array = new ${format}(${typedArrayLength});
-crypto.getRandomValues(array);
-console.log(bytesToHex(new Uint8Array(array)))
+			code = `\n let keyData = \`${keyData}\`
+let key = await crypto.subtle.importKey(
+'${format}',
+JSON.parse(key),
+{
+    name: 'RSA-OAEP',
+    hash: 'SHA-256'
+},
+${extractable},
+[${keyUsageOptions.filter(o => {return o.isChecked} ).map((o, idx, a) => {return '\'' + o.usage + '\''})}]
+);
 `;
 			hc = highlight(code);
 		});
@@ -105,6 +117,7 @@ console.log(bytesToHex(new Uint8Array(array)))
 				class="mt-1 w-full min-w-[500px] rounded-md border-gray-200 shadow-sm sm:text-sm"
 				rows="4"
 				placeholder="KeyData"
+				bind:value={keyData}
 			></textarea>
 		</div>
 
@@ -129,7 +142,7 @@ console.log(bytesToHex(new Uint8Array(array)))
 				for="extractable"
 				class="relative inline-block h-8 w-14 cursor-pointer rounded-full bg-gray-300 transition [-webkit-tap-highlight-color:_transparent] has-[:checked]:bg-primary-500"
 			>
-				<input type="checkbox" id="extractable" class="peer sr-only" />
+				<input type="checkbox" bind:checked={extractable} id="extractable" class="peer sr-only" />
 
 				<span
 					class="absolute inset-y-0 start-0 m-1 size-6 rounded-full bg-white transition-all peer-checked:start-6"
@@ -144,7 +157,7 @@ console.log(bytesToHex(new Uint8Array(array)))
 				<legend class="sr-only">Checkboxes</legend>
 
 				<div class="space-y-2">
-					{#each keyUsagesOptions as o, idx}
+					{#each keyUsageOptions as o, idx}
 						<label for="Option{idx}" class="flex cursor-pointer items-start gap-4">
 							<div class="flex items-center">
 								&#8203;
