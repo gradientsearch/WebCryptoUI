@@ -35,7 +35,7 @@
 					<div class="flex-1"></div>
 					<button onclick={copy}>copy</button>
 				</header>
-				<div class="flex min-w-[100%] justify-between bg-base-50">
+				<div class="flex min-w-[100%] justify-between bg-base-50 overflow-hidden overflow-x-scroll">
 					<pre class="hljs">
                 <code class="language-typescript">
                   {@html hc.value}
