@@ -44,7 +44,6 @@
 			keys: keys
 		}
 
-		keys[0].key.usages
 		showMethods(0);
 	});
 
