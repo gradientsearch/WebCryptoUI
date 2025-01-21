@@ -92,7 +92,6 @@ console.log(plaintext);
 {#if hc !== undefined}
 	<div class="flex flex-row">
 		<div class="p-2">
-			{input}
 			<label for="cipherText" class="flex flex-row text-base font-medium text-base-900">
 				<span class="pe-4">Cipher Text:</span>
 
