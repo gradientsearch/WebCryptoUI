@@ -39,12 +39,12 @@
 
 	let methods: Method[] = $state([]);
 
-
-
 	onMount(() => {
 		zarf = {
 			keys: keys
 		}
+
+		keys[0].key.usages
 		showMethods(0);
 	});
 

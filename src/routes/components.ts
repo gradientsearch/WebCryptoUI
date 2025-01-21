@@ -1,3 +1,4 @@
+import Decrypt from './components/decrypt.svelte';
 import GetRandomValues from './components/getRandomValues.svelte';
 import ImportKey from './components/importKey.svelte';
 import Methods from './components/methods.svelte';
@@ -15,6 +16,10 @@ export let components = {
 	importKey: {
 		components: ImportKey,
 		order: 3
+	},
+	decrypt: {
+		components: Decrypt,
+		order: 4
 	}
 };
 
@@ -32,6 +37,8 @@ export function getComponent(type: string) {
 			return GetRandomValues;
 		case 'importKey':
 			return ImportKey;
+		case 'decrypt':
+			return Decrypt;
 		case 'methods':
 			return Methods;
 	}
