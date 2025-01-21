@@ -176,7 +176,7 @@ console.log(plaintext);
 	{#if algorithm}
 		<h1>Algorithm Parameters</h1>
 		{@const Component = getAlgorithmComponent(algorithm)}
-		<Component bind:algorithmParams></Component>
+		<Component bind:algorithmParams bind:zarf></Component>
 	{/if}
 
 	{JSON.stringify(algorithmParams)}
