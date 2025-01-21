@@ -57,7 +57,6 @@
 		algorithmParams;
 		isKeyDataHexEncoded;
 		untrack(() => {
-			console.log('untracked');
 			code = `\nlet keyData = \`${keyData}\`
 let key = await crypto.subtle.importKey(
 	"${format}",
@@ -88,7 +87,6 @@ let key = await crypto.subtle.importKey(
 
 		if (zarf?.keys) {
 			zarf.keys.push({ name: keyName, key: key });
-			console.log(zarf.keys)
 		}
 
 		output = String(key);

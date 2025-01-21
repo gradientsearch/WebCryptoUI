@@ -17,7 +17,6 @@
 		untrack(() => {
 			if (input.length > 0) {
 				zarf.output.forEach((o: any) => {
-					console.log(input, o);
 					if (o.name === input) {
 						iv = new TextDecoder().decode(o.data);
 						inputData = o.data;

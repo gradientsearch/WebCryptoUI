@@ -12,7 +12,7 @@
 	let { idx, zarf = $bindable() } = $props();
 
 	let input: string = $state('');
-	let inputData: Uint8Array = $state(new Uint8Array())
+	let inputData: Uint8Array = $state(new Uint8Array());
 	let format: string = $state('jwk');
 	let cipherText: string = $state('');
 	let isCipherTextHexEncoded = $state(false);
@@ -38,22 +38,17 @@
 		keyName;
 		input;
 
-		
 		untrack(() => {
 			if (input.length > 0) {
-			zarf.output.forEach((o:any) => {
-				console.log(input, o)
-				if (o.name === input) {
-					cipherText = new TextDecoder().decode(o.data);
-					inputData = o.data
-				} 
-			});
-
-
-		} else {
-			inputData = new TextEncoder().encode(cipherText)
-		}
-			console.log('untracked');
+				zarf.output.forEach((o: any) => {
+					if (o.name === input) {
+						cipherText = new TextDecoder().decode(o.data);
+						inputData = o.data;
+					}
+				});
+			} else {
+				inputData = new TextEncoder().encode(cipherText);
+			}
 			code = `\nlet cipherText = \`${cipherText}\`
 let plaintext = crypto.subtle.decrypt(
     ${JSON.stringify(algorithmParams)},
@@ -66,16 +61,7 @@ console.log(plaintext);
 		});
 	});
 
-	function bytesToHex(bytes: Uint8Array) {
-		return Array.from(bytes, (byte) => byte.toString(16).padStart(2, '0')).join('');
-	}
-
-	function hexStringToByteArray(hexString: string): number[] {
-		return hexString.match(/.{1,2}/g)?.map((byte) => parseInt(byte, 16)) ?? [];
-	}
-
 	async function decrypt() {
-
 		let keys = zarf.keys.filter((k: key) => {
 			return k.name === keyName;
 		});
@@ -86,14 +72,16 @@ console.log(plaintext);
 		}
 
 		let plaintext = '';
-		console.log(algorithmParams);
 		if (key) {
 			let buf = await crypto.subtle.decrypt(algorithmParams, key, inputData);
-			console.log(buf);
 			plaintext = new TextDecoder().decode(buf);
 		}
 
-		output = plaintext;
+		try {
+			output = JSON.stringify(JSON.parse(plaintext), null, 2);
+		} catch {
+			output = plaintext;
+		}
 	}
 
 	onMount(() => {

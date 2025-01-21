@@ -16,7 +16,6 @@
 		typedArray;
 		typedArrayLength;
 		untrack(() => {
-			console.log('untracked');
 			code = `\nconst array = new ${typedArray}(${typedArrayLength});
 crypto.getRandomValues(array);
 console.log(bytesToHex(new ${typedArray}(array)))

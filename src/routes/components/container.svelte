@@ -59,7 +59,7 @@
 		</div>
 		{#if output}
 			<div class="w-full overflow-hidden break-words pt-10">
-				{output}
+				<pre>{output}</pre>
 			</div>
 		{/if}
 	</div>
