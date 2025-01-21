@@ -1,5 +1,5 @@
 <script lang="ts">
-	import Container from './container.svelte';
+	import Container from '../container.svelte';
 	import { onMount, untrack } from 'svelte';
 	import type { HighlightResult } from 'highlight.js';
 	import { highlight } from '$lib/hljs';
@@ -76,14 +76,6 @@ let key = await crypto.subtle.importKey(
 			hc = highlight(code);
 		});
 	});
-
-	function bytesToHex(bytes: Uint8Array) {
-		return Array.from(bytes, (byte) => byte.toString(16).padStart(2, '0')).join('');
-	}
-
-	function hexStringToByteArray(hexString: string): number[] {
-		return hexString.match(/.{1,2}/g)?.map((byte) => parseInt(byte, 16)) ?? [];
-	}
 
 	async function importKey() {
 		let key = await crypto.subtle.importKey(

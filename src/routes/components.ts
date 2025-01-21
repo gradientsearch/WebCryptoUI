@@ -1,6 +1,7 @@
-import Decrypt from './components/decrypt.svelte';
+import Decrypt from './components/decrypt/decrypt.svelte';
 import GetRandomValues from './components/getRandomValues.svelte';
-import ImportKey from './components/importKey.svelte';
+import Hex from './components/hex/hex.svelte';
+import ImportKey from './components/importKey/importKey.svelte';
 import Methods from './components/methods.svelte';
 import RandomUuid from './components/randomUUID.svelte';
 
@@ -20,6 +21,10 @@ export let components = {
 	decrypt: {
 		components: Decrypt,
 		order: 4
+	},
+	hex: {
+		component: Hex,
+		order: 5
 	}
 };
 
@@ -39,6 +44,9 @@ export function getComponent(type: string) {
 			return ImportKey;
 		case 'decrypt':
 			return Decrypt;
+		case 'hex':
+			return Hex;
+
 		case 'methods':
 			return Methods;
 	}

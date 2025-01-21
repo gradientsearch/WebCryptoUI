@@ -1,22 +1,22 @@
 <!-- TODO create new algorithm params. need options for IV etc... cant reuse what we used for import key  -->
 <script lang="ts">
-	import Container from './container.svelte';
+	import Container from '../container.svelte';
 	import { onMount, untrack } from 'svelte';
 	import type { HighlightResult } from 'highlight.js';
 	import { highlight } from '$lib/hljs';
 
-	import Aesgcm from './algorithms/aes/aes.svelte';
-	import rsa from './algorithms/rsa/rsa.svelte';
-	import { json } from '@sveltejs/kit';
-	import type { key } from '../models/keys';
+	import Aes from './algorithms/aes/aes.svelte';
+	import Rsa from './algorithms/rsa/rsa.svelte';
+	import type { key } from '../../models/keys';
 
 	let { idx, zarf = $bindable() } = $props();
 
+	let input: string = $state('');
 	let format: string = $state('jwk');
 	let cipherText: string = $state('');
 	let isCipherTextHexEncoded = $state(false);
 	let algorithm: string = $state('AES');
-	let algorithmParams: any = $state();
+	let algorithmParams: any = $state({ name: 'AES-GCM', iv: '' });
 	let keyName = $state('');
 	let code = $state('');
 	let hc: HighlightResult | undefined = $state();
@@ -24,8 +24,8 @@
 
 	let algorithms: string[] = ['AES', 'RSA']; // ['raw', 'pkcs8', 'spki', 'jwk'];
 	const ALGORITHM_COMPONENTS = new Map<String, any>([
-		['AES', Aesgcm],
-		['RSA', rsa]
+		['AES', Aes],
+		['RSA', Rsa]
 	]);
 	function getAlgorithmComponent(algo: string): any {
 		return ALGORITHM_COMPONENTS.get(algo);
@@ -34,18 +34,23 @@
 		format;
 		cipherText;
 		algorithmParams;
-		isCipherTextHexEncoded;
 		keyName;
-		let params = { name: 'AES-GCM' };
-		if (algorithmParams) {
-			params = JSON.parse(algorithmParams);
-		}
+		input;
 
+		
 		untrack(() => {
+			if (input.length > 0) {
+			zarf.output.forEach((o:any) => {
+				console.log(o)
+				if (o.name === input) {
+					cipherText = o.output;
+				}
+			});
+		}
 			console.log('untracked');
-			code = `\nlet cipherText = ${isCipherTextHexEncoded ? 'new Uint8Array(hexStringToByteArray(' : ''}\`${cipherText}\`${isCipherTextHexEncoded ? '))' : ''}
+			code = `\nlet cipherText = ${cipherText}
 let plaintext = window.crypto.subtle.decrypt(
-    { name: ${params?.name}},
+    ${JSON.stringify(algorithmParams)},
 	${keyName},
     ciphertext,
   );
@@ -64,12 +69,7 @@ console.log(plaintext);
 	}
 
 	async function decrypt() {
-		let ct: Uint8Array;
-		if (isCipherTextHexEncoded) {
-			ct = new Uint8Array(hexStringToByteArray(cipherText));
-		} else {
-			ct = new TextEncoder().encode(cipherText);
-		}
+		let ct = new Uint8Array(new TextEncoder().encode(cipherText));
 
 		let keys = zarf.keys.filter((k: key) => {
 			return k.name === keyName;
@@ -79,21 +79,16 @@ console.log(plaintext);
 		if (keys.length > 0) {
 			key = keys[0].key;
 		}
-		
-		let params = { name: 'AES-GCM' };
-		if (algorithmParams) {
-			params = JSON.parse(algorithmParams);
-		}
+
 		let plaintext = '';
+		console.log(algorithmParams);
 		if (key) {
-			let buf = await crypto.subtle.decrypt(
-				{ name: params.name }, 
-				key, ct);
+			let buf = await crypto.subtle.decrypt(algorithmParams, key, ct);
 			console.log(buf);
 			plaintext = new TextDecoder().decode(buf);
 		}
 
-		output = plaintext
+		output = plaintext;
 	}
 
 	onMount(() => {
@@ -104,6 +99,7 @@ console.log(plaintext);
 {#if hc !== undefined}
 	<div class="flex flex-row">
 		<div class="p-2">
+			{input}
 			<label for="cipherText" class="flex flex-row text-base font-medium text-base-900">
 				<span class="pe-4">Cipher Text:</span>
 
@@ -124,6 +120,21 @@ console.log(plaintext);
 				placeholder="cipherText"
 				bind:value={cipherText}
 			></textarea>
+		</div>
+
+		<div class="p-2">
+			<label for="input" class="block text-base font-medium text-base-900">input</label>
+			<select
+				name="input"
+				id="input"
+				class="border border-primary-600 bg-base-50 focus:ring-primary-600"
+				bind:value={input}
+			>
+				<option value={''}></option>
+				{#each zarf.output as o}
+					<option value={o.name}>{o.name}</option>
+				{/each}
+			</select>
 		</div>
 
 		<div class="p-2">
@@ -163,6 +174,6 @@ console.log(plaintext);
 		<Component bind:algorithmParams></Component>
 	{/if}
 
-	{algorithmParams}
+	{JSON.stringify(algorithmParams)}
 	<Container {idx} bind:hc fn={decrypt} {output}></Container>
 {/if}

@@ -41,7 +41,8 @@
 
 	onMount(() => {
 		zarf = {
-			keys: keys
+			keys: keys,
+			output: []
 		}
 
 		showMethods(0);
