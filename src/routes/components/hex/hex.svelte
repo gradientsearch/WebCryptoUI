@@ -29,7 +29,7 @@ console.log(uuid); // for example "36b8f84d-df4e-4d49-b662-bcde71a8764f"`;
 	async function hex() {
 		let plaintext = new TextDecoder().decode(new Uint8Array(hexStringToByteArray(hexData)));
 		output = plaintext;
-		zarf.output.push({ name: outputName, data: plaintext });
+		zarf.output.push({ name: outputName, data: new Uint8Array(hexStringToByteArray(hexData)) });
 	}
 
 	let hc: HighlightResult | undefined = $state();

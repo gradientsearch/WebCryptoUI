@@ -12,6 +12,7 @@
 	let { idx, zarf = $bindable() } = $props();
 
 	let input: string = $state('');
+	let inputData: Uint8Array = $state(new Uint8Array())
 	let format: string = $state('jwk');
 	let cipherText: string = $state('');
 	let isCipherTextHexEncoded = $state(false);
@@ -41,18 +42,23 @@
 		untrack(() => {
 			if (input.length > 0) {
 			zarf.output.forEach((o:any) => {
-				console.log(o)
+				console.log(input, o)
 				if (o.name === input) {
-					cipherText = o.output;
-				}
+					cipherText = new TextDecoder().decode(o.data);
+					inputData = o.data
+				} 
 			});
+
+
+		} else {
+			inputData = new TextEncoder().encode(cipherText)
 		}
 			console.log('untracked');
-			code = `\nlet cipherText = ${cipherText}
-let plaintext = window.crypto.subtle.decrypt(
+			code = `\nlet cipherText = \`${cipherText}\`
+let plaintext = crypto.subtle.decrypt(
     ${JSON.stringify(algorithmParams)},
 	${keyName},
-    ciphertext,
+    cipherText,
   );
 console.log(plaintext);
 `;
@@ -69,7 +75,6 @@ console.log(plaintext);
 	}
 
 	async function decrypt() {
-		let ct = new Uint8Array(new TextEncoder().encode(cipherText));
 
 		let keys = zarf.keys.filter((k: key) => {
 			return k.name === keyName;
@@ -83,7 +88,7 @@ console.log(plaintext);
 		let plaintext = '';
 		console.log(algorithmParams);
 		if (key) {
-			let buf = await crypto.subtle.decrypt(algorithmParams, key, ct);
+			let buf = await crypto.subtle.decrypt(algorithmParams, key, inputData);
 			console.log(buf);
 			plaintext = new TextDecoder().decode(buf);
 		}
