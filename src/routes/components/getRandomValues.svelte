@@ -19,7 +19,7 @@
 			console.log('untracked');
 			code = `\nconst array = new ${typedArray}(${typedArrayLength});
 crypto.getRandomValues(array);
-console.log(bytesToHex(new Uint8Array(array)))
+console.log(bytesToHex(new ${typedArray}(array)))
 `;
 			hc = highlight(code);
 		});
@@ -37,7 +37,7 @@ console.log(bytesToHex(new Uint8Array(array)))
 		let t = getTypedArray().get(typedArray);
 		const array = new t(typedArrayLength);
 		crypto.getRandomValues(array);
-		output = bytesToHex(new Uint8Array(array));
+		output = bytesToHex(new t(array));
 	}
 
 	function getTypedArray(): Map<String, any> {
