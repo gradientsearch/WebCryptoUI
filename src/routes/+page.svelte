@@ -4,6 +4,12 @@
 	import { MethodService, type Method, type MethodFunctions } from './services/methods.service';
 	import { getComponent } from './components';
 	import { onMount } from 'svelte';
+	import type { key } from './models/keys';
+
+
+	
+	let keys: key[] = $state([])
+	let zarf = $state()
 
 	function showMethods(idx: number) {
 		let m: Method = {
@@ -33,9 +39,12 @@
 
 	let methods: Method[] = $state([]);
 
-
-
 	onMount(() => {
+		zarf = {
+			keys: keys,
+			output: []
+		}
+
 		showMethods(0);
 	});
 
@@ -56,11 +65,11 @@
 		{#each methods as m, idx}
 			{#if m.methodType === 'methods'}
 				{@const Component = getComponent(m.methodType)}
-				<Component {idx} bind:methodService></Component>
+				<Component {idx}  bind:methodService bind:zarf></Component>
 				<AddMethod fn={showMethods} idx={idx + 1}></AddMethod>
 			{:else}
 				{@const Component = getComponent(m.methodType)}
-				<Component {idx}></Component>
+				<Component {idx}  bind:methodService bind:zarf></Component>
 				<AddMethod fn={showMethods} idx={idx + 1}></AddMethod>
 			{/if}
 			<!-- <Methods bind:methodService idx={idx + 1}></Methods> -->
