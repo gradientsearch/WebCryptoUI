@@ -5,7 +5,7 @@
 	import type { HighlightResult } from 'highlight.js';
 	import { highlight } from '$lib/hljs';
 
-    let {idx} = $props()
+    let {idx, zarf=$bindable()} = $props()
 
 	let code = `\n/* random uuid */
 let uuid = crypto.randomUUID();

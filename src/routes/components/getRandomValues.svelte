@@ -6,7 +6,7 @@
 
 	let typedArray: string = $state('Uint32Array');
 	let typedArrayLength: number = $state(10);
-	let { idx } = $props();
+	let { idx, zarf=$bindable() } = $props();
 
 	let code = $state('');
 	let hc: HighlightResult | undefined = $state();

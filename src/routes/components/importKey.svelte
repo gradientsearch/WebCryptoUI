@@ -7,10 +7,12 @@
 	import Aesgcm from './algorithms/aes/aes.svelte';
 	import rsa from './algorithms/rsa/rsa.svelte';
 
-	let { idx } = $props();
+	let { idx, zarf = $bindable() } = $props();
 
 	let format: string = $state('jwk');
 	let keyData: string = $state('');
+	let isKeyDataHexEncoded = $state(false);
+	let keyName = $state('');
 	let algorithm: string = $state('AES');
 	let extractable: boolean = $state(true);
 	let algorithmParams: any = $state();
@@ -53,12 +55,13 @@
 			return o.isChecked;
 		});
 		algorithmParams;
+		isKeyDataHexEncoded;
 		untrack(() => {
 			console.log('untracked');
 			code = `\nlet keyData = \`${keyData}\`
 let key = await crypto.subtle.importKey(
 	"${format}",
-	JSON.parse(keyData),
+	${format === 'jwk' ? (isKeyDataHexEncoded ? 'JSON.parse(new TextDecoder().decode(hexStringToByteArray(keyData)))' : 'JSON.parse(keyData)') : 'keyData'},
 	${algorithmParams},
 	${extractable},
 	[${keyUsageOptions
@@ -83,8 +86,6 @@ let key = await crypto.subtle.importKey(
 	}
 
 	async function importKey() {
-		
-		
 		let key = await crypto.subtle.importKey(
 			'jwk',
 			JSON.parse(keyData),
@@ -93,7 +94,12 @@ let key = await crypto.subtle.importKey(
 			keyUsageOptions.filter((o) => o.isChecked).map((o) => o.usage)
 		);
 
-		output = String(key)
+		if (zarf?.keys) {
+			zarf.keys.push({ name: keyName, key: key });
+			console.log(zarf.keys)
+		}
+
+		output = String(key);
 	}
 
 	onMount(() => {
@@ -118,7 +124,21 @@ let key = await crypto.subtle.importKey(
 		</div>
 
 		<div class="p-2">
-			<label for="keyData" class="block text-base font-medium text-base-900"> KeyData</label>
+			<label for="keyData" class="flex flex-row text-base font-medium text-base-900">
+				<span class="pe-4">KeyData:</span>
+
+				<input class="ps-2 accent-primary-500" type="checkbox" bind:checked={isKeyDataHexEncoded} />
+				<label for="algorithm" class="block pe-4 ps-1 text-base font-medium text-base-900"
+					>HEX</label
+				>
+
+				<input
+					class="ps-2 accent-primary-500"
+					type="text"
+					placeholder="Key Name"
+					bind:value={keyName}
+				/>
+			</label>
 
 			<textarea
 				id="keyData"

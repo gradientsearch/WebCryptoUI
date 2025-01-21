@@ -8,7 +8,13 @@
 		hc = $bindable<HighlightResult>(),
 		idx = $bindable<number>()
 	} = $props();
+
+	let showCopiedToast = $state(false);
 	function copy() {
+		showCopiedToast = true;
+		setTimeout(() => {
+			showCopiedToast = false;
+		}, 2000);
 		if (hc?.code !== undefined) {
 			navigator.clipboard.writeText(hc.code).then(
 				() => {
@@ -31,11 +37,18 @@
 		<div class=" flex w-[100%] items-start border border-base-200">
 			<div class="w-[100%] flex-col">
 				<header class="flex w-[100%] flex-row bg-base-200">
-					<button onclick={() => fn()}>run</button>
+					<button class="p-1 text-lg hover:scale-110" onclick={() => fn()}>▶</button>
 					<div class="flex-1"></div>
-					<button onclick={copy}>copy</button>
+					<div class="relative flex flex-col">
+						<button class="p-1 text-lg hover:scale-110" onclick={copy}>💾</button>
+						{#if showCopiedToast}
+							<span class="absolute -right-[4px] bottom-[125%] rounded-lg bg-base-300 p-2"
+								>copied</span
+							>
+						{/if}
+					</div>
 				</header>
-				<div class="flex min-w-[100%] justify-between bg-base-50 overflow-hidden overflow-x-scroll">
+				<div class="flex min-w-[100%] justify-between overflow-hidden overflow-x-scroll bg-base-50">
 					<pre class="hljs">
                 <code class="language-typescript">
                   {@html hc.value}
